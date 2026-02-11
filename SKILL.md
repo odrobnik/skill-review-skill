@@ -1,6 +1,6 @@
 ---
 name: skill-review
-version: 0.1.1
+version: 0.1.2
 description: >
   Scrape ClawHub skill pages for Security Scan (VirusTotal/OpenClaw) + Runtime
   Requirements + Comments for all of Oliver's local skills, and write a markdown

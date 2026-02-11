@@ -325,6 +325,7 @@ def main() -> None:
                 # Prefer DOM extraction (more reliable than parsing text blobs)
                 dom_sec = _extract_security_dom(page)
                 if dom_sec:
+                    sec["domOk"] = True
                     sec.update(
                         {
                             "vtStatus": dom_sec.get("vtStatus") or sec.get("vtStatus"),
@@ -337,6 +338,7 @@ def main() -> None:
                         }
                     )
                 else:
+                    sec["domOk"] = False
                     # Fallback: try to locate VT report link
                     try:
                         a = page.query_selector("a[href*='virustotal.com/gui/file/']")
@@ -441,11 +443,13 @@ def main() -> None:
             lines.append(str(sec.get("guidance")).strip())
             lines.append("```")
 
-        lines.append("")
-        lines.append("**Security Scan (raw text fallback):**")
-        lines.append("```text")
-        lines.append((sec.get("raw") or "(missing)").strip())
-        lines.append("```")
+        # Only include raw text fallback when DOM extraction failed (avoids duplicate content).
+        if not sec.get("domOk"):
+            lines.append("")
+            lines.append("**Security Scan (raw text fallback):**")
+            lines.append("```text")
+            lines.append((sec.get("raw") or "(missing)").strip())
+            lines.append("```")
 
         lines.append("")
         lines.append("**Runtime requirements (as shown):**")
