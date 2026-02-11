@@ -88,7 +88,11 @@ def _md_escape(s: str) -> str:
 
 
 def _parse_page_text(text: str) -> dict[str, Any]:
-    """Parse the main text blob into sections."""
+    """Parse the main text blob into sections.
+
+    Kept as a fallback because some parts of the page are easier to capture as text,
+    but security scan details should prefer DOM scraping.
+    """
     t = (text or "").replace("\r", "")
     lines = [ln.strip() for ln in t.split("\n") if ln.strip()]
 
@@ -156,14 +160,77 @@ def _parse_page_text(text: str) -> dict[str, Any]:
         "version": version,
         "security": {
             "vtStatus": vt_status,
+            "vtLink": None,
             "ocStatus": oc_status,
             "ocConf": oc_conf,
             "ocReason": oc_reason,
+            "summary": None,
+            "dimensions": None,
+            "guidance": None,
             "raw": sec_raw,
         },
         "runtime": runtime,
         "comments": comments,
     }
+
+
+def _extract_security_dom(page: Any) -> dict[str, Any] | None:
+    """Extract security scan data from the rendered DOM.
+
+    Returns None if the scan panel isn't present (e.g. page layout changed or gated).
+    """
+
+    js = r"""
+() => {
+  const panel = document.querySelector('.scan-results-panel');
+  if (!panel) return null;
+
+  const rows = Array.from(panel.querySelectorAll('.scan-result-row'));
+
+  function pickRow(name) {
+    for (const r of rows) {
+      const n = r.querySelector('.scan-result-scanner-name')?.innerText?.trim();
+      if (n === name) return r;
+    }
+    return null;
+  }
+
+  const vtRow = pickRow('VirusTotal');
+  const ocRow = pickRow('OpenClaw');
+
+  const vtStatus = vtRow?.querySelector('.scan-result-status')?.innerText?.trim() || null;
+  const vtLink = vtRow?.querySelector('a.scan-result-link')?.href || null;
+
+  const ocStatus = ocRow?.querySelector('.scan-result-status')?.innerText?.trim() || null;
+  const ocConf = ocRow?.querySelector('.scan-result-confidence')?.innerText?.trim() || null;
+
+  const detail = panel.querySelector('.analysis-detail');
+  const summary = detail?.querySelector('.analysis-summary-text')?.innerText?.trim() || null;
+
+  // Expand details if collapsed
+  const header = detail?.querySelector('.analysis-detail-header');
+  if (header) {
+    try { header.click(); } catch (e) {}
+  }
+
+  const dims = [];
+  const dimRows = Array.from(detail?.querySelectorAll('.dimension-row') || []);
+  for (const r of dimRows) {
+    const label = r.querySelector('.dimension-label')?.innerText?.trim() || null;
+    const body = r.querySelector('.dimension-detail')?.innerText?.trim() || null;
+    if (label || body) dims.push({ label, detail: body });
+  }
+
+  const guidance = detail?.querySelector('.analysis-guidance')?.innerText?.trim() || null;
+
+  return { vtStatus, vtLink, ocStatus, ocConf, summary, dimensions: dims, guidance };
+}
+"""
+
+    try:
+        return page.evaluate(js)
+    except Exception:
+        return None
 
 
 def main() -> None:
@@ -172,6 +239,7 @@ def main() -> None:
     ap.add_argument("--skills-dir", default=str(Path.home() / "Developer" / "Skills"), help="Folder containing local skills")
     ap.add_argument("--out", default=None, help="Output markdown path (default: /tmp/clawhub-skill-review-YYYY-MM-DD.md)")
     ap.add_argument("--slug-map", default=None, help="Optional JSON mapping of local slug->ClawHub slug")
+    ap.add_argument("--only", default=None, help="Only scrape a single slug (after slug-map), e.g. tesla-fleet-api")
     ap.add_argument("--limit", type=int, default=0, help="Limit number of skills (0=all)")
     ap.add_argument("--headful", action="store_true", help="Run browser non-headless")
 
@@ -186,6 +254,16 @@ def main() -> None:
     slug_map = _load_slug_map(args.slug_map)
 
     local_skills = _find_local_skills(skills_dir)
+
+    # Apply slug map early so --only matches what we'll scrape.
+    mapped_skills: list[LocalSkill] = []
+    for s in local_skills:
+        mapped_skills.append(LocalSkill(path=s.path, slug=slug_map.get(s.slug, s.slug), local_version=s.local_version))
+    local_skills = mapped_skills
+
+    if args.only:
+        local_skills = [s for s in local_skills if s.slug == args.only]
+
     if args.limit and args.limit > 0:
         local_skills = local_skills[: args.limit]
 
@@ -205,14 +283,20 @@ def main() -> None:
         page = browser.new_page()
 
         for s in local_skills:
-            slug = slug_map.get(s.slug, s.slug)
+            slug = s.slug
             url = f"https://clawhub.ai/{args.owner}/{slug}"
             sys.stderr.write(f"Scraping {slug}…\n")
             sys.stderr.flush()
 
             try:
-                page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                page.wait_for_selector("main", timeout=15000)
+                # ClawHub renders the scan panel client-side; wait for JS to finish.
+                page.goto(url, wait_until="networkidle", timeout=60000)
+                page.wait_for_selector("main", timeout=20000)
+                # Prefer to wait for the scan panel; if it's missing, we'll fall back to text parsing.
+                try:
+                    page.wait_for_selector(".scan-results-panel", timeout=20000)
+                except Exception:
+                    pass
 
                 # Expand any Details dropdowns.
                 try:
@@ -235,18 +319,31 @@ def main() -> None:
                 main_el = page.query_selector("main")
                 text = main_el.inner_text() if main_el else page.content()
 
-                # VirusTotal link
-                vt_link = None
-                try:
-                    a = page.query_selector("a[href*='virustotal.com/gui/file/']")
-                    if a:
-                        vt_link = a.get_attribute("href")
-                except Exception:
-                    pass
-
                 parsed = _parse_page_text(text)
                 sec = parsed.get("security") or {}
-                sec["vtLink"] = vt_link
+
+                # Prefer DOM extraction (more reliable than parsing text blobs)
+                dom_sec = _extract_security_dom(page)
+                if dom_sec:
+                    sec.update(
+                        {
+                            "vtStatus": dom_sec.get("vtStatus") or sec.get("vtStatus"),
+                            "vtLink": dom_sec.get("vtLink") or sec.get("vtLink"),
+                            "ocStatus": dom_sec.get("ocStatus") or sec.get("ocStatus"),
+                            "ocConf": dom_sec.get("ocConf") or sec.get("ocConf"),
+                            "summary": dom_sec.get("summary"),
+                            "dimensions": dom_sec.get("dimensions"),
+                            "guidance": dom_sec.get("guidance"),
+                        }
+                    )
+                else:
+                    # Fallback: try to locate VT report link
+                    try:
+                        a = page.query_selector("a[href*='virustotal.com/gui/file/']")
+                        if a:
+                            sec["vtLink"] = a.get_attribute("href")
+                    except Exception:
+                        pass
 
                 rows.append(
                     {
@@ -320,13 +417,35 @@ def main() -> None:
         lines.append("")
 
         sec = r.get("security") or {}
-        lines.append("**Security Scan (raw):**")
+        lines.append("**Security Scan:**")
+        lines.append("")
+        lines.append(f"- VirusTotal: {sec.get('vtStatus') or '—'}")
+        if sec.get("vtLink"):
+            lines.append(f"  - {sec.get('vtLink')}")
+        lines.append(f"- OpenClaw: {sec.get('ocStatus') or '—'} ({sec.get('ocConf') or '—'})")
+        if sec.get("summary"):
+            lines.append(f"- Summary: {sec.get('summary')}")
+
+        if sec.get("dimensions"):
+            lines.append("")
+            lines.append("**OpenClaw analysis dimensions:**")
+            for d in sec.get("dimensions") or []:
+                label = d.get("label") or "(unknown)"
+                detail = d.get("detail") or ""
+                lines.append(f"- {label}: {detail}")
+
+        if sec.get("guidance"):
+            lines.append("")
+            lines.append("**OpenClaw guidance:**")
+            lines.append("```text")
+            lines.append(str(sec.get("guidance")).strip())
+            lines.append("```")
+
+        lines.append("")
+        lines.append("**Security Scan (raw text fallback):**")
         lines.append("```text")
         lines.append((sec.get("raw") or "(missing)").strip())
         lines.append("```")
-        if sec.get("vtLink"):
-            lines.append("")
-            lines.append(f"VirusTotal: {sec.get('vtLink')}")
 
         lines.append("")
         lines.append("**Runtime requirements (as shown):**")
