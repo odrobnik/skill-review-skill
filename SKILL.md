@@ -1,6 +1,6 @@
 ---
 name: skill-review
-version: 0.2.1
+version: 0.2.2
 description: >
   Scrape ClawHub skill pages for Security Scan (VirusTotal/OpenClaw) + Runtime
   Requirements + Comments for all of Oliver's local skills, and write a markdown
@@ -11,6 +11,9 @@ metadata:
     emoji: "🔎"
     requires:
       bins: ["python3"]
+      python: ["playwright"]
+    env:
+      VIRUSTOTAL_API_KEY: "Optional — enables direct VT API lookups (falls back to Playwright scraping)"
 ---
 
 # Skill Review (ClawHub Security Scan scraper)
