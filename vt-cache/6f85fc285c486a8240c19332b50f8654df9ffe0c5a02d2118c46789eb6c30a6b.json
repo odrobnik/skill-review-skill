@@ -1,0 +1,6 @@
+{
+  "hash": "6f85fc285c486a8240c19332b50f8654df9ffe0c5a02d2118c46789eb6c30a6b",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  19.30 KB\nLast analysis: 2026-02-13 09:22 UTC\nCode insights: Type: OpenClaw Skill\nName: loxone\nVersion: 1.3.3\n\nThe OpenClaw Loxone skill is classified as benign. The code and documentation are well-aligned with the stated purpose of controlling a Loxone smart home system. Key indicators for this classification include explicit instructions in `SKILL.md` and `SETUP.md` for the AI agent to 'Treat as read-only by default' and only use control commands 'when explicitly requested', demonstrating a focus on safety. Input sanitization is present in `scripts/loxone.py` and `scripts/loxone_client.py` for command values and UUIDs, mitigating injection risks. All network calls are directed to the Loxone Miniserver or its Cloud DNS resolution service, with no evidence of data exfiltration to unauthorized external endpoints. There are no signs of obfuscation, persistence mechanisms, or arbitrary code execution.",
+  "codeInsightsVerdict": "benign"
+}

@@ -1,0 +1,6 @@
+{
+  "hash": "32623b915b2159c55e2c76e03562f246985539cbffd17d62394aa3738e850f98",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  3.63 KB\nLast analysis: 2026-02-12 07:54 UTC\nCode insights: Type: OpenClaw Skill\nName: gemini-yt-video-transcript\nVersion: 1.0.4\n\nThe skill is designed to transcribe YouTube videos using Google Gemini. The `SKILL.md` provides clear, benign instructions without any prompt injection attempts against the OpenClaw agent. The `scripts/youtube_transcript.py` script securely handles the `GEMINI_API_KEY` from environment variables, makes network calls exclusively to legitimate Google Gemini and YouTube oEmbed endpoints, and includes a robust `_safe_output_path` function to restrict file output to the skill's workspace or temporary directories, preventing arbitrary file writes. There is no evidence of data exfiltration, malicious execution, persistence mechanisms, or obfuscation.",
+  "codeInsightsVerdict": "benign"
+}

@@ -1,0 +1,6 @@
+{
+  "hash": "fa913acc2fa2bc19df6f4f242d08edb3fec0c0a96d3ce11dca94d5f73ffe3f0a",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  8.60 KB\nLast analysis: 2026-02-13 06:29 UTC\nCode insights: Type: OpenClaw Skill\nName: who-growth-charts\nVersion: 1.2.1\n\nThe skill is benign. It downloads necessary WHO reference data and an emblem from `cdn.who.int`, which are legitimate sources for its stated purpose of generating growth charts. The script includes robust path sanitization (`_safe_filename`) and input/output path validation (`_safe_input_path`) to prevent directory traversal and restrict file operations to the designated workspace or standard temporary directories (`/tmp`, `TMPDIR`). There is no evidence of data exfiltration, unauthorized command execution, persistence mechanisms, or prompt injection attempts in `SKILL.md` or the Python code. All network and file system interactions are aligned with the skill's described functionality.",
+  "codeInsightsVerdict": "benign"
+}

@@ -1,0 +1,6 @@
+{
+  "hash": "75f0b47c83ff9d98eb55f16d49092bfd9c0293836338c51fbfde7a09642c84ce",
+  "cached_at": "2026-02-16T14:02:25+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  2.15 KB\nLast analysis: 2026-02-07 14:49 UTC\nCode insights: Type: OpenClaw Skill\nName: printer\nVersion: 1.0.0\n\nThe skill bundle is classified as benign. All commands, including those requiring `sudo` (e.g., `lpadmin` for system-wide printer options) and network access (`curl`, `nc`, `ipptool`, `dns-sd`, `snmpwalk`), are standard macOS/CUPS utilities directly aligned with the stated purpose of managing printers. Network calls target local printer IPs for discovery, status, and wake-up, with no evidence of data exfiltration to external endpoints. File access is limited to the CUPS error log for diagnostics. There are no indications of prompt injection, obfuscation, or malicious intent in SKILL.md.",
+  "codeInsightsVerdict": "benign"
+}

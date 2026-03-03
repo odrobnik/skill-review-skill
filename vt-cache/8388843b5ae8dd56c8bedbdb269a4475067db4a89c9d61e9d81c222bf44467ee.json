@@ -1,0 +1,6 @@
+{
+  "hash": "8388843b5ae8dd56c8bedbdb269a4475067db4a89c9d61e9d81c222bf44467ee",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  16.01 KB\nLast analysis: 2026-02-15 17:24 UTC\nCode insights: Type: OpenClaw Skill\nName: unifi-site-manager\nVersion: 3.1.0\n\nThe skill is classified as suspicious due to a potential Man-in-the-Middle (MITM) vulnerability in `scripts/unifi.py`. If the `gateway_fingerprint` is not configured in `config.json`, local HTTPS connections to the UniFi gateway are made with `requests.Session().verify = False`, disabling certificate verification. While `SETUP.md` clearly documents how to enable secure certificate pinning to mitigate this, the default or unconfigured state presents a risk. No other malicious indicators such as data exfiltration, unauthorized command execution, persistence, obfuscation, or prompt injection attempts were found, and the code includes a positive `_sanitize_path_param` function for URL parameters.",
+  "codeInsightsVerdict": "suspicious"
+}

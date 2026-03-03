@@ -1,0 +1,6 @@
+{
+  "hash": "e74e674d9bec62f47fb841ea29b6b196d7f04e473e25c6cc2bcb32aa7179c975",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  16.89 KB\nLast analysis: 2026-02-13 11:55 UTC\nCode insights: Type: OpenClaw Skill\nName: bricklink\nVersion: 1.4.1\n\nThe skill is classified as **benign**.\n\nThe `scripts/_pathguard.py` module explicitly implements output path sanitization, ensuring that generated files (e.g., HTML reports) are written only within the OpenClaw workspace or `/tmp` directory, effectively preventing path traversal vulnerabilities. Additionally, the `scripts/bricklink.py` script restricts batch input files for inventory creation to the workspace or `/tmp` via the `_load_batch_file` function. Credential handling is secure, loading OAuth 1.0 secrets from a designated `config.json` within the workspace or from environment variables, without attempting to read from arbitrary or sensitive system locations. All network interactions are directed to the legitimate BrickLink API, and there is no evidence of data exfiltration, malicious execution, persistence mechanisms, or prompt injection attempts in the documentation.",
+  "codeInsightsVerdict": ""
+}

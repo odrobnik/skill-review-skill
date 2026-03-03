@@ -1,0 +1,6 @@
+{
+  "hash": "956d8ea962f855126d79e039dd3cdb3db6bbe8ef207decb386a4f859a6eafd02",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  9.77 KB\nLast analysis: 2026-02-13 06:30 UTC\nCode insights: Type: OpenClaw Skill\nName: withings-family\nVersion: 1.1.1\n\nThe skill is designed to interact with the Withings API to fetch health data for multiple family members. It implements standard OAuth flows, including a local callback server for automatic authentication. Key security considerations, such as sanitizing user IDs to prevent path traversal when storing token files (`tokens-<userId>.json`) and setting secure file permissions (`0o600`), are addressed. All network communication is directed to the legitimate Withings API endpoints or localhost for OAuth. There is no evidence of data exfiltration to unauthorized destinations, malicious execution, persistence mechanisms, or prompt injection attempts in the SKILL.md instructions. The code aligns with its stated purpose and includes reasonable security practices.",
+  "codeInsightsVerdict": "benign"
+}

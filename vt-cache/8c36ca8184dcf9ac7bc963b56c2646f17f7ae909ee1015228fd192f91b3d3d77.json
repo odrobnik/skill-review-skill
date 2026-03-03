@@ -1,0 +1,6 @@
+{
+  "hash": "8c36ca8184dcf9ac7bc963b56c2646f17f7ae909ee1015228fd192f91b3d3d77",
+  "cached_at": "2026-02-24T11:04:40+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  18.14 KB\nLast analysis: 2026-02-24 09:01 UTC\nCode insights: Type: OpenClaw Skill\nName: sudoku\nVersion: 2.3.0\n\nThe OpenClaw Sudoku skill is benign. It fetches Sudoku puzzles from `sudokuonline.io`, stores them as JSON in the workspace, and renders them as images or PDFs. It also generates shareable links for SudokuPad (`sudokupad.app`, `sudokupad.svencodes.com`). All external network calls are to legitimate Sudoku-related services, and file system operations are confined to the skill's designated workspace. There is no evidence of intentional malicious behavior, data exfiltration, persistence mechanisms, or prompt injection attempts against the agent.",
+  "codeInsightsVerdict": "benign"
+}

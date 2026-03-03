@@ -1,0 +1,6 @@
+{
+  "hash": "7556506af7e12f0d26d04593fa9cf97647ff1d34ad903a5ba56db04360fcf646",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  38.99 KB\nLast analysis: 2026-02-13 06:29 UTC\nCode insights: Type: OpenClaw Skill\nName: george\nVersion: 1.4.1\n\nThe OpenClaw George skill is classified as benign. It automates online banking tasks (login, account listing, transaction fetching, data exports, data carrier upload/sign) for Erste Bank/Sparkasse Austria using Playwright. The code demonstrates strong security practices, including strict file permissions (umask, chmod) for sensitive session data (Playwright profile, token.json), filename sanitization to prevent path traversal, redaction of sensitive URLs in logs, and validation of file types for data carrier uploads. All network communication is confined to the expected `sparkasse.at` domains. There is no evidence of intentional harmful behavior, data exfiltration to unauthorized endpoints, malicious execution, persistence mechanisms, or prompt injection attempts against the AI agent.",
+  "codeInsightsVerdict": "benign"
+}

@@ -1,0 +1,6 @@
+{
+  "hash": "fd0554f05f34c70eb8c765ce18ece810fab341fd112a869ab05437fe155c5e7d",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  11.60 KB\nLast analysis: 2026-02-13 10:28 UTC\nCode insights: Type: OpenClaw Skill\nName: skill-review\nVersion: 0.2.3\n\nThe OpenClaw skill `skill-review` is designed to scrape ClawHub skill pages for security scan results and generate a local markdown report. The Python script `scripts/skill_review.py` uses Playwright for web scraping `clawhub.ai` and `urllib.request` to query the VirusTotal API using a `VIRUSTOTAL_API_KEY` (loaded from environment or `~/.openclaw/.env`). All network and file system accesses (e.g., reading local `SKILL.md` files, writing to `/tmp/`) are directly aligned with its stated purpose. There is no evidence of data exfiltration to unauthorized endpoints, persistence mechanisms, obfuscation, or prompt injection attempts in `SKILL.md` to manipulate the AI agent into malicious actions. The `suppressions.json` file merely documents acceptable findings for *other* skills, not this one. The code's behavior is transparent and consistent with a legitimate security review tool.",
+  "codeInsightsVerdict": "benign"
+}

@@ -1,0 +1,6 @@
+{
+  "hash": "e5c8f7a91ebd4f4ab6b56677e856a716eb1fce20d0683981ba0186957acfb29e",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: tesla-fleet-api-1.5.0.zip  Size  32.94 KB\nLast analysis: 2026-02-14 20:27 UTC\nCode insights: Type: OpenClaw Skill\nName: tesla-fleet-api\nVersion: 1.5.0\n\nThe OpenClaw AgentSkills skill bundle for Tesla Fleet API is classified as benign. All scripts and documentation align with the stated purpose of controlling and retrieving data from Tesla vehicles. The skill employs standard security practices, including HTTPS for API communication, OAuth 2.0 with CSRF protection, and secure local storage of sensitive data (tokens, client secrets) with `0o600` file permissions via `scripts/store.py`. The `start_proxy.sh` script generates self-signed TLS certificates for a local proxy and uses a version-pinned official Tesla tool (`tesla-http-proxy@v0.4.1`). There is no evidence of intentional harmful behavior such as data exfiltration to unauthorized endpoints, backdoor installation, or prompt injection attempts to subvert the agent's core directives.",
+  "codeInsightsVerdict": "benign"
+}

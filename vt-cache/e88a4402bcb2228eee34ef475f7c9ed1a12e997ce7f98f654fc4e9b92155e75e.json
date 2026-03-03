@@ -1,0 +1,6 @@
+{
+  "hash": "e88a4402bcb2228eee34ef475f7c9ed1a12e997ce7f98f654fc4e9b92155e75e",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  14.96 KB\nLast analysis: 2026-02-15 17:36 UTC\nCode insights: Type: OpenClaw Skill\nName: intranet\nVersion: 3.2.4\n\nThe OpenClaw Intranet skill is a local HTTP file server with robust security controls. It implements strong path traversal protection, webroot isolation, restricted CGI execution (only `index.py` with optional SHA-256 hash verification for plugins), and ensures all plugin paths are contained within the workspace. Authentication via bearer tokens and host allowlisting are also well-implemented. There is no evidence of intentional data exfiltration, backdoor installation, or prompt injection attempts in the documentation. The code focuses on its stated purpose, with security features designed to prevent unauthorized access or execution of user-provided content.",
+  "codeInsightsVerdict": "benign"
+}

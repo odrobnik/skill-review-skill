@@ -1,0 +1,6 @@
+{
+  "hash": "a8e0d0c3a05ff323ab2ed068f2455cf21d23f0685fc8b261bf92e8d310d2710c",
+  "cached_at": "2026-02-19T23:01:34+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  41.24 KB\nLast analysis: 2026-02-19 22:11 UTC\nCode insights: Type: OpenClaw Skill\nName: george\nVersion: 1.5.2\n\nThe OpenClaw skill 'george' is a banking automation tool for Erste Bank/Sparkasse Austria. It uses Playwright for browser automation and direct API calls. The code demonstrates strong security practices, including robust input sanitization (`_sanitize_id`), path traversal prevention (`_validate_upload_file`, `_safe_download_filename`), and strict permission hardening for sensitive session data (`_set_strict_umask`, `_harden_tree`) in `scripts/george.py`. All network communication is directed to legitimate banking domains (`api.sparkasse.at`, `george.sparkasse.at`). There is no evidence of intentional harmful behavior, data exfiltration to unauthorized endpoints, or malicious prompt injection in `SKILL.md`.",
+  "codeInsightsVerdict": "benign"
+}

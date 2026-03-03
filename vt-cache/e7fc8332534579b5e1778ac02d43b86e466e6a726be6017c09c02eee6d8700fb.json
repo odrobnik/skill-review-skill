@@ -1,0 +1,6 @@
+{
+  "hash": "e7fc8332534579b5e1778ac02d43b86e466e6a726be6017c09c02eee6d8700fb",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  1.72 KB\nLast analysis: 2026-02-13 06:29 UTC\nCode insights: Type: OpenClaw Skill\nName: codexmonitor\nVersion: 0.2.1\n\nThe skill bundle is designed to list, inspect, and watch local OpenAI Codex sessions by reading files from `~/.codex/sessions`. The `SKILL.md` and `SETUP.md` files provide clear instructions for installation via Homebrew and usage of the `codexmonitor` tool. There is no evidence of data exfiltration beyond the stated purpose, malicious execution, persistence mechanisms, or prompt injection attempts against the AI agent. All actions described are consistent with the skill's stated functionality.",
+  "codeInsightsVerdict": "benign"
+}

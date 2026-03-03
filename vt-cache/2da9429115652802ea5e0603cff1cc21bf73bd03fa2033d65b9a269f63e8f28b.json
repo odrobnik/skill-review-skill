@@ -1,0 +1,6 @@
+{
+  "hash": "2da9429115652802ea5e0603cff1cc21bf73bd03fa2033d65b9a269f63e8f28b",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  5.50 KB\nLast analysis: 2026-02-13 06:29 UTC\nCode insights: Type: OpenClaw Skill\nName: codex-quota\nVersion: 1.2.1\n\nThe skill is classified as suspicious due to its use of sensitive file operations and external binary execution, which, while documented, carry inherent risks. Specifically, the `codex-quota.py` script reads and temporarily overwrites `~/.codex/auth.json` to switch between user accounts for quota checks, and executes the `codex` CLI via `subprocess.run`. Although these actions are explicitly stated in `SKILL.md` and `SETUP.md` and are central to the skill's described functionality, and the script attempts to restore the original `auth.json`, the manipulation of authentication files and reliance on external binaries for core functionality elevate the risk profile. There is no evidence of malicious intent such as data exfiltration, persistence, or unauthorized actions beyond the stated purpose.",
+  "codeInsightsVerdict": "suspicious"
+}

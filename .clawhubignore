@@ -13,6 +13,7 @@ venv/
 *.log
 *.db
 *.sqlite
+vt-cache/
 
 # Secrets & credentials (never publish)
 .env

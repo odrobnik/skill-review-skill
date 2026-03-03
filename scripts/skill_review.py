@@ -407,11 +407,54 @@ def _format_vt_api_result(attrs: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+# ── VT Cache ──────────────────────────────────────────────────────────
+
+_SKILL_DIR = Path(__file__).resolve().parent.parent
+_VT_CACHE_DIR = _SKILL_DIR / "vt-cache"
+
+
+def _vt_cache_path(file_hash: str) -> Path:
+    """Return the cache file path for a given file hash."""
+    return _VT_CACHE_DIR / f"{file_hash}.json"
+
+
+def _vt_cache_load(file_hash: str) -> dict[str, Any] | None:
+    """Load cached VT result for a file hash. Returns None on miss."""
+    p = _vt_cache_path(file_hash)
+    if not p.exists():
+        return None
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        sys.stderr.write(f"    VT cache hit: {file_hash[:12]}…\n")
+        sys.stderr.flush()
+        return data
+    except Exception:
+        return None
+
+
+def _vt_cache_store(file_hash: str, result: dict[str, Any] | str | None) -> None:
+    """Store a VT result in the cache."""
+    _VT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    entry = {
+        "hash": file_hash,
+        "cached_at": dt.datetime.now(tz=dt.timezone.utc).isoformat(timespec="seconds"),
+    }
+    if isinstance(result, dict):
+        entry.update(result)
+    elif isinstance(result, str):
+        entry["text"] = result
+    _vt_cache_path(file_hash).write_text(
+        json.dumps(entry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+
 def _scrape_virustotal(page: Any, vt_url: str, *, api_key: str | None = None) -> str | None:
     """Get VirusTotal analysis for a file.
 
     Prefers the VT v3 API (clean, structured) when api_key is available.
     Falls back to Playwright scraping of the VT GUI page otherwise.
+    Results are cached by file hash — repeated queries for the same
+    version return instantly without API calls.
     """
     if not vt_url or "virustotal.com" not in vt_url:
         return None
@@ -419,6 +462,16 @@ def _scrape_virustotal(page: Any, vt_url: str, *, api_key: str | None = None) ->
     file_hash = _hash_from_vt_url(vt_url)
     if not file_hash:
         return None
+
+    # ── Cache check ───────────────────────────────────────────────────
+    cached = _vt_cache_load(file_hash)
+    if cached is not None:
+        # Reconstruct the return value the caller expects
+        text = cached.get("text")
+        ci_verdict = cached.get("codeInsightsVerdict")
+        if ci_verdict is not None:
+            return {"text": text, "codeInsightsVerdict": ci_verdict}
+        return text
 
     # ── API path (preferred) ──────────────────────────────────────────
     # _VTQuotaExhausted is intentionally NOT caught here — it propagates
@@ -440,7 +493,9 @@ def _scrape_virustotal(page: Any, vt_url: str, *, api_key: str | None = None) ->
             text = "\n".join(sections) if sections else None
             # Return a dict when we have structured data (Code Insights verdict)
             ci_verdict = ci.get("verdict") if ci else None
-            return {"text": text, "codeInsightsVerdict": ci_verdict}
+            result = {"text": text, "codeInsightsVerdict": ci_verdict}
+            _vt_cache_store(file_hash, result)
+            return result
         # API failed — fall through to scraping
 
     # ── Scraping fallback (no API key or API error) ───────────────────
@@ -490,7 +545,10 @@ def _scrape_virustotal(page: Any, vt_url: str, *, api_key: str | None = None) ->
                 sections_fb.append(f"File: {structured['fileInfo']}")
             if structured.get("codeInsights"):
                 sections_fb.append(f"Code insights: {structured['codeInsights']}")
-        return "\n".join(sections_fb) if sections_fb else None
+        result_text = "\n".join(sections_fb) if sections_fb else None
+        if result_text:
+            _vt_cache_store(file_hash, result_text)
+        return result_text
 
     except Exception as e:
         return f"(VT scrape error: {e})"

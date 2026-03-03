@@ -1,0 +1,6 @@
+{
+  "hash": "47d69f34624d036eed538d145858fe296dcd40e1c52cfabe9a4e475c3b114fe5",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  6.77 KB\nLast analysis: 2026-02-13 11:57 UTC\nCode insights: Type: OpenClaw Skill\nName: klientenportal\nVersion: 1.5.0\n\nThe skill is benign, demonstrating strong security practices. It implements robust path sandboxing (`_safe_output_path`, `_is_allowed` in `scripts/klientenportal.py`) to restrict file uploads and downloads to the workspace or `/tmp`, preventing arbitrary file access. Credentials are handled securely via environment variables or a dedicated config file, used only for Playwright login, and are not logged or exfiltrated. Furthermore, `_set_strict_umask` and `_harden_path` apply restrictive permissions to skill-specific directories and files, and the `SKILL.md` contains no prompt injection attempts. All network activity is confined to the specified `klientenportal.at` domain.",
+  "codeInsightsVerdict": "benign"
+}

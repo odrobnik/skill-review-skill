@@ -4,6 +4,11 @@
       "scanner": "VirusTotal",
       "pattern": "handling of highly sensitive authentication",
       "reason": "Reads/writes ~/.codex/auth.json by design — account switching requires credential file manipulation"
+    },
+    {
+      "scanner": "OpenClaw",
+      "pattern": "sensitive authentication",
+      "reason": "Reads/writes ~/.codex/auth.json by design — account switching requires credential file manipulation. Reviewed and acknowledged."
     }
   ],
   "codex-quota": [

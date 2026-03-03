@@ -1,0 +1,6 @@
+{
+  "hash": "9bed2bd8c58cab64610ab8c49c6df891e74fa02ea19c843c276dc693542d8079",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  10.97 KB\nLast analysis: 2026-02-13 09:22 UTC\nCode insights: Type: OpenClaw Skill\nName: codex-account-switcher\nVersion: 1.2.3\n\nThe skill is classified as suspicious due to its direct handling of highly sensitive authentication tokens (`~/.codex/auth.json`, `~/.codex/accounts/*.json`) and its reliance on executing external binaries (`codex logout`, `codex login`, `codex -p PING`) via `subprocess` calls in `codex-accounts.py`. While these actions are central to its stated purpose of managing Codex accounts, they represent high-risk capabilities. The script does not exhibit clear malicious intent such as data exfiltration, persistence mechanisms, or prompt injection attempts against the agent in `SKILL.md`. It includes safeguards like email-based verification before overwriting token files (`safe_save_token`) and preventing automatic browser opening during login (`BROWSER=/usr/bin/false`), but the inherent risk of managing sensitive credentials and executing external commands warrants a 'suspicious' classification rather than 'benign'.",
+  "codeInsightsVerdict": "suspicious"
+}

@@ -1,0 +1,5 @@
+{
+  "hash": "17538f3aa252a995437803db05e1dea410f13fee3b34baada63d676faa33e247",
+  "cached_at": "2026-02-15T22:04:42+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip      Size  17.19 KB\nCode insights: Type: OpenClaw Skill\nName: unifi-site-manager\nVersion: 3.2.1\nThe OpenClaw skill bundle is classified as benign. The scripts/unifi.py code interacts with legitimate UniFi cloud and local APIs, handling API keys and sensitive configuration (like gateway_fingerprint for TLS pinning) securely. It includes input sanitization (_sanitize_path_param) to prevent injection vulnerabilities in API paths. There is no evidence of data exfiltration to unauthorized endpoints, backdoor installation, or arbitrary command execution. The SKILL.md and SETUP.md files provide clear, non-malicious instructions for the AI agent and user, with the openssl command in SETUP.md being a safe, user-executed setup step for certificate pinning."
+}

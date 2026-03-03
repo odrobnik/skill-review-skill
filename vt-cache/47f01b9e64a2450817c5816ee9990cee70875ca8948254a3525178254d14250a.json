@@ -1,0 +1,6 @@
+{
+  "hash": "47f01b9e64a2450817c5816ee9990cee70875ca8948254a3525178254d14250a",
+  "cached_at": "2026-02-15T19:56:41+00:00",
+  "text": "Detection: No security vendors flagged this file as malicious\nFile: skill.zip  Size  12.34 KB\nLast analysis: 2026-02-13 06:29 UTC\nCode insights: Type: OpenClaw Skill\nName: snapmaker-2\nVersion: 1.2.1\n\nThe skill bundle is benign. It provides functionality to control Snapmaker 2.0 3D printers via their local HTTP API, aligning with its stated purpose. The `scripts/snapmaker.py` file implements robust safety features, including file path sandboxing (restricting uploads to workspace or /tmp), file extension validation for print jobs, and interactive confirmations for destructive actions. The `scripts/monitor.py` includes a safe logging mechanism to prevent arbitrary file writes. The `SKILL.md` documentation contains no prompt injection attempts against the AI agent. All identified behaviors are consistent with a legitimate printer control skill.",
+  "codeInsightsVerdict": "benign"
+}
